@@ -92,7 +92,7 @@ always @(posedge clk) begin
     end
   else 
     begin
-      if(tx_count <= rx_max)
+      if(tx_count <= tx_max)
         begin
           tx_count <= tx_count + 1;
         end
