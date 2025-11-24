@@ -498,12 +498,16 @@ class agent extends uvm_agent;
   uvm_sequencer#(transaction) seqr;
   monitor m;
 
+  // UPDATED BUILD PHASE — now gets cfg from env
   virtual function void build_phase(uvm_phase phase);
     super.build_phase(phase);
-    cfg = uart_config::type_id::create("cfg");
+
+    if(!uvm_config_db#(uart_config)::get(this, "", "cfg", cfg))
+      `uvm_fatal("AGENT_CFG", "uart_config not found in config DB!");
+
     m = monitor::type_id::create("m", this);
 
-    if (cfg.is_active == UVM_ACTIVE) begin   // active = mon + drv + seqr
+    if (cfg.is_active == UVM_ACTIVE) begin
       d = driver::type_id::create("d", this);
       seqr = uvm_sequencer#(transaction)::type_id::create("seqr", this);
     end
@@ -520,8 +524,12 @@ class agent extends uvm_agent;
 endclass
 
 
+
+
 class env extends uvm_env;
   `uvm_component_utils(env)
+
+  uart_config cfg;   // ADDED HERE
 
   function new(input string path = "env", uvm_component parent = null);
     super.new(path,parent);
@@ -530,8 +538,13 @@ class env extends uvm_env;
   agent a;
   sco s;
 
+  // UPDATED BUILD PHASE — create and set config here
   virtual function void build_phase(uvm_phase phase);
     super.build_phase(phase);
+
+    cfg = uart_config::type_id::create("cfg");
+    uvm_config_db#(uart_config)::set(this, "a", "cfg", cfg);
+
     a = agent::type_id::create("a", this);
     s = sco::type_id::create("s", this);
   endfunction
@@ -542,6 +555,9 @@ class env extends uvm_env;
   endfunction
 
 endclass
+
+
+
 
 
 class test extends uvm_test;
