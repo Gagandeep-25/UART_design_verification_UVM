@@ -39,19 +39,19 @@ class transaction extends uvm_sequence_item;
   rand logic [7:0]  tx_data;
   rand logic [16:0] baud;
   rand logic [3:0]  length;
-  rand logic        parity_type, parity_en;
+  rand logic parity_type, parity_en;
   logic stop2;
   logic rx_done, tx_done, tx_err, rx_err;
   logic [7:0] rx_out;
 
-  constraint baud_c   { baud inside {4800, 9600, 14400, 19200, 38400, 57600}; }
+  constraint baud_c { baud inside {4800, 9600, 14400, 19200, 38400, 57600}; }
   constraint length_c { length inside {5,6,7,8}; }
 
   function new(input string name = "transaction");
     super.new(name);
   endfunction
 
-endclass : transaction
+endclass 
 
 
 class rand_baud extends uvm_sequence#(transaction);
@@ -429,14 +429,14 @@ class monitor extends uvm_monitor;
          @(posedge vif.tx_done);
 
          tr.rst = 1'b0;
-         tr.tx_start   = vif.tx_start;
-         tr.rx_start   = vif.rx_start;
-         tr.tx_data    = vif.tx_data;
-         tr.baud       = vif.baud;
-         tr.length     = vif.length;
+         tr.tx_start = vif.tx_start;
+         tr.rx_start = vif.rx_start;
+         tr.tx_data = vif.tx_data;
+         tr.baud = vif.baud;
+         tr.length = vif.length;
          tr.parity_type= vif.parity_type;
-         tr.parity_en  = vif.parity_en;
-         tr.stop2      = vif.stop2;
+         tr.parity_en = vif.parity_en;
+         tr.stop2 = vif.stop2;
 
          @(negedge vif.rx_done);
 
@@ -523,9 +523,6 @@ class agent extends uvm_agent;
 
 endclass
 
-
-
-
 class env extends uvm_env;
   `uvm_component_utils(env)
 
@@ -555,10 +552,6 @@ class env extends uvm_env;
   endfunction
 
 endclass
-
-
-
-
 
 class test extends uvm_test;
   `uvm_component_utils(test)
